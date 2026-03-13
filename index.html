@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Webber Method - Coach</title>
+  <style>
+    :root { --green:#0d5c33; --dark:#0a2e1a; --light:#f4faf6; }
+    *{box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
+    body{margin:0;background:linear-gradient(160deg,var(--dark),#0f4327 35%,var(--light) 35%);min-height:100vh;line-height:1.4}
+    .hero{color:#fff;padding:1rem 1rem .4rem}
+    .hero h1{margin:.2rem 0;font-size:clamp(1.35rem,4.8vw,2rem)}
+    .hero p{margin:.15rem 0 .45rem}
+    main{padding:0 1rem 1.2rem}
+    .card{background:#fff;border:1px solid #d6e8dc;border-radius:12px;padding:.9rem;margin:.7rem 0}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(250px,1fr));gap:.7rem}
+    .grid3{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:.7rem}
+    label{display:flex;flex-direction:column;gap:.25rem}
+    input,select,textarea,button{padding:.7rem;border:1px solid #b8d2c0;border-radius:10px;font-size:16px}
+    textarea{min-height:96px}
+    button{background:var(--green);color:#fff;border:0;cursor:pointer}
+    .muted{color:#466}
+    .nav{display:flex;gap:.45rem;flex-wrap:wrap;padding:0 0 .5rem}
+    .nav button{background:#d9ecdf;color:#133;padding:.5rem .75rem;border-radius:999px}
+    .nav button.active{background:var(--green);color:#fff}
+    .page{display:none}
+    .page.active{display:block}
+    .list{max-height:300px;overflow:auto}
+    .table-wrap{overflow:auto;-webkit-overflow-scrolling:touch}
+    table{width:100%;min-width:620px;border-collapse:collapse;font-size:.9rem}
+    th,td{border-bottom:1px solid #e6efe9;padding:.45rem;text-align:left}
+    td button{margin:.15rem 0}
+    .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem}
+    .summary-pill{background:#ecf7f0;border:1px solid #cde4d4;border-radius:10px;padding:.6rem}
+    .summary-pill h4,.summary-pill p{margin:0}
+    .summary-pill p{margin-top:.2rem;font-weight:700}
+    .text-link{background:none;border:0;color:var(--green);padding:0;font-weight:600;text-align:left}
+    .sub-box{display:none;margin-top:.8rem;padding:.8rem;border:1px solid #d6e8dc;border-radius:10px;background:#f8fcf9}
+    .clubhouse-logout{display:flex;justify-content:flex-end;margin-top:1rem}
+    .clubhouse-logout button{max-width:220px}
+    .club-goals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.6rem}
+    .club-goal-card{border:1px solid #cde4d4;background:#f8fcf9;border-radius:10px;padding:.65rem}
+    .club-goal-card h5{margin:.1rem 0 .5rem;color:#18402b}
+    .club-goal-card .grid{grid-template-columns:repeat(2,minmax(120px,1fr));gap:.5rem}
+    @media (max-width:900px){.grid,.grid3{grid-template-columns:1fr}}
+    @media (max-width:600px){button{width:100%;min-height:44px} td button{display:block;width:100%}}
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <h1>⛳ The Webber Method - Coach</h1>
+    <p>Develop the golfer, not just the golf swing.</p>
+  </header>
+
+  <main>
+    <section class="card" id="authCard">
+      <h3>Coach Login</h3>
+      <p class="muted">Login requires coach email, password, and coach code.</p>
+      <div class="grid">
+        <label>Coach Email <input id="coachEmail" type="email" /></label>
+        <label>Password <input id="coachPassword" type="password" /></label>
+        <label>Coach Code <input id="coachCode" type="password" /></label>
+        <div style="display:flex;align-items:end"><button id="coachLogin">Unlock Coach App</button></div>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
+        <button id="showCreateCoach" type="button">Create Coach Account</button>
+        <button id="showForgotCoach" class="text-link" type="button">Forgot password?</button>
+      </div>
+
+      <div id="createCoachBox" class="sub-box">
+        <h4>Create Coach Account</h4>
+        <div class="grid">
+          <label>Coach Name <input id="newCoachName" /></label>
+          <label>Coach Email <input id="newCoachEmail" type="email" /></label>
+          <label>Password <input id="newCoachPassword" type="password" /></label>
+          <label>Coach Code <input id="newCoachCode" type="password" /></label>
+          <div style="display:flex;align-items:end"><button id="createCoachAccount" type="button">Create Account</button></div>
+        </div>
+      </div>
+
+      <div id="forgotCoachBox" class="sub-box">
+        <h4>Forgot Password</h4>
+        <div class="grid">
+          <label>Coach Email <input id="forgotCoachEmail" type="email" /></label>
+          <label>Coach Code <input id="forgotCoachCode" type="password" /></label>
+          <label>New Password <input id="forgotCoachPassword" type="password" /></label>
+          <label>Confirm New Password <input id="forgotCoachConfirm" type="password" /></label>
+        </div>
+        <button id="resetCoachPassword" type="button">Reset Password</button>
+      </div>
+    </section>
+
+    <section id="coachArea" style="display:none">
+      <nav class="nav">
+        <button data-page="clubhouse" class="active">Clubhouse</button>
+        <button data-page="invite">Create/Invite Students</button>
+        <button data-page="students">Student List</button>
+        <button data-page="drills">Drills Library</button>
+      </nav>
+
+      <section class="page active" id="clubhouse-page">
+        <div class="card">
+          <h3>Clubhouse</h3>
+          <p class="muted">Signed in as <strong id="activeCoachEmail"></strong></p>
+          <div class="grid3">
+            <button id="goInvite" type="button">Create / Invite Student</button>
+            <button id="goStudents" type="button">Open Student List</button>
+            <button id="goDrills" type="button">Add Drill</button>
+          </div>
+          <div class="clubhouse-logout">
+            <button id="coachLogout" type="button">Logout</button>
+          </div>
+        </div>
+        <div class="summary-grid">
+          <div class="summary-pill"><h4>Total Students</h4><p id="totalStudents">0</p></div>
+          <div class="summary-pill"><h4>Coach Invite Email</h4><p id="coachEmailDisplay">Not set</p></div>
+          <div class="summary-pill"><h4>Total Drills</h4><p id="totalDrills">0</p></div>
+        </div>
+      </section>
+
+      <section class="page" id="invite-page">
+        <section class="card">
+          <h3>Coach Invite Email Settings</h3>
+          <p class="muted">Set the coach email students should use when replying to invite emails.</p>
+          <div class="grid">
+            <label>Coach Email for Invites <input id="coachInviteEmail" type="email" placeholder="coach@example.com" /></label>
+            <div style="display:flex;align-items:end"><button id="saveCoachEmail" type="button">Save Coach Email</button></div>
+          </div>
+          <p class="muted" id="coachEmailStatus">No coach email saved yet.</p>
+        </section>
+
+        <section class="card">
+          <h3>Create / Invite Student</h3>
+          <div class="grid">
+            <label>Student Name <input id="studentName" /></label>
+            <label>Student Email <input id="studentEmail" type="email" /></label>
+          </div>
+          <div class="grid" style="align-items:end">
+            <label>Invite Email App
+              <select id="inviteProvider">
+                <option value="mailto">Default Mail App</option>
+                <option value="gmail">Gmail (Web)</option>
+                <option value="outlook">Outlook (Web)</option>
+              </select>
+            </label>
+            <div><button id="addStudent">Add Student + Open Invite Draft</button></div>
+          </div>
+          <p class="muted">This opens a pre-filled draft you can send immediately.</p>
+          <label>Invite Preview <textarea id="invitePreview" readonly></textarea></label>
+          <button id="copyInvite" type="button">Copy Invite Text</button>
+        </section>
+      </section>
+
+      <section class="page" id="students-page">
+        <section class="card">
+          <h3>Student List</h3>
+          <label>Search Students <input id="studentSearch" placeholder="Search by name or email" /></label>
+          <div class="table-wrap list"><table><thead><tr><th>Name</th><th>Email</th><th>Actions</th></tr></thead><tbody id="studentRows"></tbody></table></div>
+        </section>
+
+        <section class="card" id="studentEditor" style="display:none">
+          <h3 id="editorTitle">Student Profile</h3>
+          <div class="grid3">
+            <label>Student Program
+              <select id="studentProgram"><option>Break 100 Program</option><option>Break 90 Program</option><option>Break 80 Program</option><option>Break 70 Program</option></select>
+            </label>
+            <label>Tee Shot Rank (1-4) <input id="rankTee" type="number" min="1" max="4" value="1" /></label>
+            <label>Approach Rank (1-4) <input id="rankApproach" type="number" min="1" max="4" value="2" /></label>
+            <label>Short Game Rank (1-4) <input id="rankShort" type="number" min="1" max="4" value="3" /></label>
+            <label>Course Mgmt Rank (1-4) <input id="rankCourse" type="number" min="1" max="4" value="4" /></label>
+          </div>
+          <div class="card" style="margin-top:.7rem">
+            <h4>Per-Club Performance Lab Goals + Variances (From Student My Bag)</h4>
+            <p class="muted">Set goal + variance for Smash Factor, Club Path, Face-to-Path, and Attack Angle for each club in the student's My Bag.</p>
+            <div id="clubTrackmanSettings" class="club-goals-grid"></div>
+          </div>
+          <div class="card" style="margin-top:.7rem">
+            <h4>Practice Focus by Performance Area</h4>
+            <div class="grid">
+              <label>Tee Shot Performance Focus <textarea id="focusTee"></textarea></label>
+              <label>Approach Shot Performance Focus <textarea id="focusApproach"></textarea></label>
+              <label>Short Game Performance Focus <textarea id="focusShort"></textarea></label>
+              <label>Course Management Focus <textarea id="focusCourse"></textarea></label>
+            </div>
+            <div class="grid" style="align-items:end">
+              <div><button id="applyAllDaysFocus" type="button">Apply Focus to All Program Days</button></div>
+              <label>Specific Program Day
+                <input id="specificDayInput" type="number" min="1" max="180" value="1" />
+              </label>
+              <div><button id="applySpecificDayFocus" type="button">Apply Focus to Specific Day</button></div>
+            </div>
+            <div class="grid" style="align-items:end;margin-top:.5rem">
+              <label>Daily Theme Override (Specific Day)
+                <input id="dailyThemeInput" placeholder="e.g. Start-line control and speed training" />
+              </label>
+              <div><button id="applyDailyTheme" type="button">Apply Daily Theme to Specific Day</button></div>
+            </div>
+            <p class="muted" id="focusStatus">No focus actions yet.</p>
+          </div>
+          <div class="card" style="margin-top:.7rem">
+            <h4>Performance Path Day Control</h4>
+            <p class="muted" id="programDayStatus">Current Day: Day 1</p>
+            <div class="grid" style="align-items:end">
+              <label>Set Student Current Program Day (1-180)
+                <input id="programDayInput" type="number" min="1" max="180" value="1" />
+              </label>
+              <div><button id="setProgramDayBtn" type="button">Set Current Day</button></div>
+              <div><button id="resetProgramDayBtn" type="button">Reset Program to Day 1</button></div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:.7rem">
+            <h4>Assign Drills to Student (Performance Path)</h4>
+            <div class="grid" style="align-items:end">
+              <label>Drill from Coach Library
+                <select id="assignDrillFromLibrary"></select>
+              </label>
+              <label>Student Drill Category
+                <select id="assignDrillCategory">
+                  <option>Tee Shot Performance</option>
+                  <option>Approach Shot Performance</option>
+                  <option>Short Game Performance</option>
+                  <option>Course Management</option>
+                  <option>Body/Movement Performance</option>
+                </select>
+              </label>
+              <div><button id="assignDrillToStudentBtn" type="button">Assign Drill to Student</button></div>
+            </div>
+            <div id="assignedStudentDrills" class="table-wrap list" style="margin-top:.6rem"></div>
+          </div>
+          <button id="saveStudentProfile">Save Student Coach Settings</button>
+        </section>
+
+        <section class="card" id="studentData" style="display:none">
+          <h3>Student Application Data</h3>
+          <div id="studentDataSummary" class="muted"></div>
+          <div class="grid">
+            <div><h4>Rounds</h4><div class="table-wrap list"><table><thead><tr><th>Date</th><th>Score</th></tr></thead><tbody id="roundRows"></tbody></table></div></div>
+            <div><h4>Practice</h4><div class="table-wrap list"><table><thead><tr><th>Date</th><th>Minutes</th></tr></thead><tbody id="practiceRows"></tbody></table></div></div>
+          </div>
+          <div><h4>Performance Summary (Simulator)</h4><div class="table-wrap list"><table><thead><tr><th>Date</th><th>Club</th><th>Smash</th><th>Path</th><th>F2P</th><th>Attack</th></tr></thead><tbody id="trackmanRows"></tbody></table></div></div>
+        </section>
+      </section>
+
+      <section class="page" id="drills-page">
+        <section class="card">
+          <h3>Drills Library</h3>
+          <p class="muted">Add drills by performance area.</p>
+          <div class="grid">
+            <label>Performance Area
+              <select id="drillSection">
+                <option>Tee Shot Performance</option>
+                <option>Approach Shot Performance</option>
+                <option>Short Game Performance</option>
+                <option>Course Management</option>
+                <option>Body/Movement Performance</option>
+              </select>
+            </label>
+            <label>Drill Title <input id="drillTitle" /></label>
+          </div>
+          <label>Description <textarea id="drillDescription"></textarea></label>
+          <label>Optional Drill Video <input id="drillVideo" type="file" accept="video/*" /></label>
+          <button id="addDrill" type="button">Add Drill</button>
+        </section>
+        <div id="drillSections"></div>
+      </section>
+    </section>
+  </main>
+
+<script>
+const COACH_CODE = 'webbercoach';
+const coachesKey = 'wm_coaches';
+let currentCoachEmail = '';
+let selectedEmail = '';
+let selectedClubSettingsClub = '';
+let clubTrackmanDraft = {};
+
+const getCoaches = ()=>JSON.parse(localStorage.getItem(coachesKey)||'[]');
+const setCoaches = (coaches)=>localStorage.setItem(coachesKey, JSON.stringify(coaches));
+const getCoach = (email)=>getCoaches().find(c=>c.email===email);
+
+function updateCoach(email, mutator){
+  const coaches = getCoaches();
+  const i = coaches.findIndex(c=>c.email===email);
+  if(i<0) return false;
+  mutator(coaches[i]);
+  setCoaches(coaches);
+  return true;
+}
+
+function getCurrentCoach(){ return getCoach(currentCoachEmail); }
+function getStudents(){ return getCurrentCoach()?.students || []; }
+function syncLegacyStudents(studentsList){
+  const legacy = JSON.parse(localStorage.getItem('wm_students')||'[]');
+  const byEmail = {};
+  legacy.forEach(s=>{ if(s?.email) byEmail[String(s.email).toLowerCase()] = s; });
+  (studentsList||[]).forEach(s=>{ if(s?.email) byEmail[String(s.email).toLowerCase()] = s; });
+  localStorage.setItem('wm_students', JSON.stringify(Object.values(byEmail)));
+}
+function removeLegacyStudent(email){
+  const em=String(email||'').toLowerCase();
+  const legacy = JSON.parse(localStorage.getItem('wm_students')||'[]').filter(s=>String(s?.email||'').toLowerCase()!==em);
+  localStorage.setItem('wm_students', JSON.stringify(legacy));
+  const users = JSON.parse(localStorage.getItem('wm_users')||'[]').filter(u=>String(u?.email||'').toLowerCase()!==em);
+  localStorage.setItem('wm_users', JSON.stringify(users));
+}
+function setStudents(students){ updateCoach(currentCoachEmail, c=>{ c.students = students; }); syncLegacyStudents(students); }
+function getDrills(){ return getCurrentCoach()?.drills || []; }
+function setDrills(drills){ updateCoach(currentCoachEmail, c=>{ c.drills = drills; }); }
+function getCoachInviteEmail(){ return getCurrentCoach()?.inviteEmail || ''; }
+function setCoachInviteEmail(email){ updateCoach(currentCoachEmail, c=>{ c.inviteEmail = email; }); }
+function studentDataKey(email){ return `wm_student_data_${encodeURIComponent(currentCoachEmail)}_${email}`; }
+function getStudentData(email){ return JSON.parse(localStorage.getItem(studentDataKey(email))||'{"rounds":[],"practice":[],"trackman":[],"myBag":[]}'); }
+function normalizeMyBag(bag){
+  const list = Array.isArray(bag) ? bag : [];
+  const seen = new Set();
+  return list.reduce((out,item)=>{
+    const club = typeof item === 'string' ? item : String(item?.club || '');
+    if(!club || seen.has(club)) return out;
+    seen.add(club);
+    out.push(club);
+    return out;
+  },[]);
+}
+function clubMetricDefaults(profile){
+  return {
+    smash:{goal:'', variance:Number(profile?.variance?.smash ?? 0.06), step:'0.01', label:'Smash Factor'},
+    path:{goal:'', variance:Number(profile?.variance?.path ?? 2), step:'0.1', label:'Club Path'},
+    f2p:{goal:'', variance:Number(profile?.variance?.f2p ?? 2), step:'0.1', label:'Face-to-Path'},
+    attack:{goal:'', variance:Number(profile?.variance?.attack ?? 2), step:'0.1', label:'Attack Angle'}
+  };
+}
+function normalizeTrackmanByClub(profile){
+  const out = profile?.trackmanByClub ? JSON.parse(JSON.stringify(profile.trackmanByClub)) : {};
+  const legacy = profile?.smashByClub || {};
+  Object.keys(legacy).forEach(club=>{
+    out[club] = out[club] || {};
+    out[club].smash = out[club].smash || {goal:legacy[club]?.goal ?? '', variance:legacy[club]?.variance ?? Number(profile?.variance?.smash ?? 0.06)};
+  });
+  return out;
+}
+function ensureClubTrackmanDraft(profile, bagClubs){
+  const defaults = clubMetricDefaults(profile);
+  const base = normalizeTrackmanByClub(profile);
+  bagClubs.forEach(club=>{
+    const existing = clubTrackmanDraft[club] || base[club] || {};
+    clubTrackmanDraft[club] = {
+      smash:{goal:existing.smash?.goal ?? defaults.smash.goal, variance:Number(existing.smash?.variance ?? defaults.smash.variance)},
+      path:{goal:existing.path?.goal ?? defaults.path.goal, variance:Number(existing.path?.variance ?? defaults.path.variance)},
+      f2p:{goal:existing.f2p?.goal ?? defaults.f2p.goal, variance:Number(existing.f2p?.variance ?? defaults.f2p.variance)},
+      attack:{goal:existing.attack?.goal ?? defaults.attack.goal, variance:Number(existing.attack?.variance ?? defaults.attack.variance)}
+    };
+  });
+}
+function saveVisibleClubTrackmanDraft(profile){
+  if(!selectedClubSettingsClub) return;
+  const defaults = clubMetricDefaults(profile);
+  const read=(metric)=>{
+    const g=document.getElementById(`club_${metric}_goal`);
+    const v=document.getElementById(`club_${metric}_variance`);
+    if(!g || !v) return clubTrackmanDraft[selectedClubSettingsClub]?.[metric] || defaults[metric];
+    const goalRaw=g.value.trim();
+    const varianceRaw=Number(v.value);
+    return {goal:goalRaw===''?'':Number(goalRaw), variance:Number.isFinite(varianceRaw)?varianceRaw:defaults[metric].variance};
+  };
+  clubTrackmanDraft[selectedClubSettingsClub]={
+    smash:read('smash'),
+    path:read('path'),
+    f2p:read('f2p'),
+    attack:read('attack')
+  };
+}
+function renderClubTrackmanSettings(profile, bagClubs){
+  const defaults = clubMetricDefaults(profile);
+  if(!bagClubs.length){
+    selectedClubSettingsClub='';
+    clubTrackmanSettings.innerHTML = '<p class="muted">No clubs found in student My Bag yet. Student must add clubs first.</p>';
+    return;
+  }
+  ensureClubTrackmanDraft(profile, bagClubs);
+  if(!selectedClubSettingsClub || !bagClubs.includes(selectedClubSettingsClub)) selectedClubSettingsClub = bagClubs[0];
+  const m = clubTrackmanDraft[selectedClubSettingsClub] || {};
+  const metricCard=(metricKey)=>{
+    const d=defaults[metricKey];
+    const cfg=m[metricKey] || d;
+    const goal=cfg.goal ?? d.goal;
+    const variance=cfg.variance ?? d.variance;
+    return `<div class='summary-pill'><h4>${d.label}</h4><div class='grid'><label>Goal <input id='club_${metricKey}_goal' type='number' step='${d.step}' value='${goal}' placeholder='Optional goal' /></label><label>Variance (±) <input id='club_${metricKey}_variance' type='number' step='${d.step}' value='${variance}' /></label></div></div>`;
+  };
+  clubTrackmanSettings.innerHTML = `<div class='summary-grid' style='margin-bottom:.6rem'><label>Selected Club for Goal/Variance Settings<select id='clubSettingsSelect'>${bagClubs.map(c=>`<option value='${c}' ${c===selectedClubSettingsClub?'selected':''}>${c}</option>`).join('')}</select></label><div class='summary-pill'><h4>Configuration Scope</h4><p>Per selected club</p></div></div><div class='club-goal-card'><h5>${selectedClubSettingsClub}</h5>${metricCard('smash')}${metricCard('path')}${metricCard('f2p')}${metricCard('attack')}</div>`;
+  const sel=document.getElementById('clubSettingsSelect');
+  if(sel) sel.onchange=()=>{ saveVisibleClubTrackmanDraft(profile); selectedClubSettingsClub=sel.value; renderClubTrackmanSettings(profile, bagClubs); };
+}
+function collectClubTrackmanSettings(bagClubs, profile){
+  saveVisibleClubTrackmanDraft(profile);
+  const defaults = clubMetricDefaults(profile);
+  return bagClubs.reduce((out,club)=>{
+    const d = clubTrackmanDraft[club] || {};
+    out[club]={
+      smash:d.smash || {goal:'',variance:defaults.smash.variance},
+      path:d.path || {goal:'',variance:defaults.path.variance},
+      f2p:d.f2p || {goal:'',variance:defaults.f2p.variance},
+      attack:d.attack || {goal:'',variance:defaults.attack.variance}
+    };
+    return out;
+  },{});
+}
+
+
+const pageMap={clubhouse:'clubhouse-page',invite:'invite-page',students:'students-page',drills:'drills-page'};
+document.querySelectorAll('.nav button').forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(pageMap[btn.dataset.page]).classList.add('active');
+});
+goInvite.onclick=()=>document.querySelector('[data-page="invite"]').click();
+goStudents.onclick=()=>document.querySelector('[data-page="students"]').click();
+goDrills.onclick=()=>document.querySelector('[data-page="drills"]').click();
+
+showCreateCoach.onclick=()=>{ createCoachBox.style.display = createCoachBox.style.display==='none' || !createCoachBox.style.display ? 'block' : 'none'; };
+showForgotCoach.onclick=()=>{ forgotCoachBox.style.display = forgotCoachBox.style.display==='none' || !forgotCoachBox.style.display ? 'block' : 'none'; };
+
+createCoachAccount.onclick=()=>{
+  const name = newCoachName.value.trim();
+  const email = newCoachEmail.value.trim().toLowerCase();
+  const password = newCoachPassword.value;
+  const code = newCoachCode.value;
+  if(!name || !email || !password || !code) return alert('Enter coach name, email, password, and coach code.');
+  if(code !== COACH_CODE) return alert('Invalid coach code.');
+  const coaches = getCoaches();
+  if(coaches.some(c=>c.email===email)) return alert('Coach account already exists.');
+  coaches.push({name,email,password,code,inviteEmail:'',students:[],drills:[]});
+  setCoaches(coaches);
+  newCoachName.value=''; newCoachEmail.value=''; newCoachPassword.value=''; newCoachCode.value='';
+  alert('Coach account created. You can now login.');
+};
+
+resetCoachPassword.onclick=()=>{
+  const email = forgotCoachEmail.value.trim().toLowerCase();
+  const code = forgotCoachCode.value;
+  const password = forgotCoachPassword.value;
+  const confirm = forgotCoachConfirm.value;
+  if(!email || !code || !password || !confirm) return alert('Complete all forgot password fields.');
+  if(code !== COACH_CODE) return alert('Invalid coach code.');
+  if(password !== confirm) return alert('Passwords do not match.');
+  const ok = updateCoach(email, c=>{ c.password = password; });
+  if(!ok) return alert('Coach account not found.');
+  forgotCoachEmail.value=''; forgotCoachCode.value=''; forgotCoachPassword.value=''; forgotCoachConfirm.value='';
+  forgotCoachBox.style.display='none';
+  alert('Password reset. You can now login.');
+};
+
+coachLogin.onclick = ()=>{
+  const email = coachEmail.value.trim().toLowerCase();
+  const password = coachPassword.value;
+  const code = coachCode.value;
+  if(!email || !password || !code) return alert('Enter coach email, password, and coach code.');
+  const coach = getCoach(email);
+  if(!coach || coach.password !== password || coach.code !== code || code !== COACH_CODE) return alert('Invalid login credentials.');
+  currentCoachEmail = email;
+  authCard.style.display='none';
+  coachArea.style.display='block';
+  activeCoachEmail.textContent = coach.name || currentCoachEmail;
+  coachInviteEmail.value = getCoachInviteEmail();
+  coachEmailStatus.textContent = coachInviteEmail.value ? `Invite emails will include coach contact: ${coachInviteEmail.value}` : 'No coach email saved yet.';
+  renderStudents();
+  renderDrills();
+  renderClubhouseSummary();
+};
+
+(()=>{
+  const q = new URLSearchParams(window.location.search||'');
+  if(q.get('masterLogin')!=='1') return;
+  const em = String(q.get('email')||'').trim().toLowerCase();
+  const pw = String(q.get('password')||'');
+  const code = String(q.get('code')||'');
+  if(!em || !pw || !code) return;
+  coachEmail.value = em;
+  coachPassword.value = pw;
+  coachCode.value = code;
+  setTimeout(()=>coachLogin.click(), 0);
+})();
+
+
+coachLogout.onclick = ()=>{
+  currentCoachEmail = '';
+  selectedEmail = '';
+  coachArea.style.display = 'none';
+  authCard.style.display = 'block';
+  studentEditor.style.display='none';
+  studentData.style.display='none';
+  coachPassword.value='';
+  coachCode.value='';
+  alert('Logged out.');
+};
+
+function renderClubhouseSummary(){
+  totalStudents.textContent = getStudents().length;
+  coachEmailDisplay.textContent = getCoachInviteEmail() || 'Not set';
+  totalDrills.textContent = getDrills().length;
+}
+
+function renderStudents(){
+  const q=(studentSearch.value||'').trim().toLowerCase();
+  const rows = getStudents().filter(s=>!q || s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q))
+    .map(s=>`<tr><td>${s.name}</td><td>${s.email}</td><td><button onclick="openStudent('${s.email}')">Open</button> <button onclick="resendInvite('${s.email}')">Resend Invite</button> <button onclick="deleteStudent('${s.email}')">Delete Student</button></td></tr>`).join('') || '<tr><td colspan="3">No students found.</td></tr>';
+  studentRows.innerHTML = rows;
+  renderClubhouseSummary();
+}
+studentSearch.oninput = renderStudents;
+
+window.openStudent = (email)=>{
+  selectedEmail = email;
+  document.querySelector('[data-page="students"]').click();
+  const s = getStudents().find(x=>x.email===email);
+  if(!s) return;
+  studentEditor.style.display='block';
+  studentData.style.display='block';
+  editorTitle.textContent = `Student Profile — ${s.name}`;
+
+  const p = s.profile || {};
+  studentProgram.value = p.program || 'Break 100 Program';
+  rankTee.value = p.rankings?.tee ?? 1;
+  rankApproach.value = p.rankings?.approach ?? 2;
+  rankShort.value = p.rankings?.short ?? 3;
+  rankCourse.value = p.rankings?.course ?? 4;
+  focusTee.value = p.practiceFocusAllDays?.tee || '';
+  focusApproach.value = p.practiceFocusAllDays?.approach || '';
+  focusShort.value = p.practiceFocusAllDays?.short || '';
+  focusCourse.value = p.practiceFocusAllDays?.course || '';
+  renderAssignDrillOptions();
+  renderAssignedStudentDrills(s);
+
+  const d = getStudentData(email);
+  const currentDay = deriveCurrentProgramDay(p, d);
+  programDayInput.value = currentDay;
+  programDayStatus.textContent = `Current Day: Day ${currentDay}`;
+  const bagClubs = normalizeMyBag(d.myBag);
+  selectedClubSettingsClub='';
+  clubTrackmanDraft={};
+  renderClubTrackmanSettings(p, bagClubs);
+  studentDataSummary.textContent = `Rounds: ${d.rounds.length} · Practice Sessions: ${d.practice.length} · Performance Entries (Simulator): ${d.trackman.length}`;
+  roundRows.innerHTML = d.rounds.slice().reverse().map(r=>`<tr><td>${r.date||''}</td><td>${r.score??''}</td></tr>`).join('') || '<tr><td colspan="2">No round data</td></tr>';
+  practiceRows.innerHTML = d.practice.slice().reverse().map(p=>`<tr><td>${p.date||''}</td><td>${p.totalPoints??''}</td></tr>`).join('') || '<tr><td colspan="2">No practice data</td></tr>';
+  trackmanRows.innerHTML = d.trackman.slice().reverse().map(t=>`<tr><td>${t.date||''}</td><td>${t.club||''}</td><td>${t.clubSpeed??''}</td><td>${t.path??''}</td><td>${t.faceToPath??''}</td><td>${t.attack??''}</td></tr>`).join('') || '<tr><td colspan="6">No trackman data</td></tr>';
+};
+
+window.resendInvite = (email)=>{
+  const student = getStudents().find(s=>s.email===email);
+  if(!student) return;
+  const invite = buildInviteEmail(student.name, student.email);
+  invitePreview.value = decodeURIComponent(invite.body);
+  openInviteDraft(student.email, invite.subject, invite.body);
+  document.querySelector('[data-page="invite"]').click();
+  alert(`Invite email draft opened for ${student.email}. Please press Send in your email app.`);
+};
+
+window.deleteStudent = (email)=>{
+  const student = getStudents().find(s=>s.email===email);
+  if(!student) return;
+  if(!confirm(`Delete student ${student.name} (${student.email})?`)) return;
+  setStudents(getStudents().filter(s=>s.email!==email));
+  removeLegacyStudent(email);
+  localStorage.removeItem(studentDataKey(email));
+  if(selectedEmail===email){ selectedEmail=''; studentEditor.style.display='none'; studentData.style.display='none'; }
+  renderStudents();
+  alert('Student deleted.');
+};
+
+saveCoachEmail.onclick = ()=>{
+  const email = coachInviteEmail.value.trim().toLowerCase();
+  if(!email) return alert('Enter coach email to save invite sender details.');
+  setCoachInviteEmail(email);
+  coachEmailStatus.textContent = `Invite emails will include coach contact: ${email}`;
+  renderClubhouseSummary();
+  alert('Coach invite email saved.');
+};
+
+function buildInviteEmail(name, email){
+  const subject = encodeURIComponent('Create your Webber Method Student Account');
+  const coachEmail = getCoachInviteEmail();
+  const fromLine = coachEmail ? `If you have questions, reply to your coach at: ${coachEmail}\n\n` : '';
+  const body = encodeURIComponent(`Hi ${name},
+
+Great news—you just took your first step toward better overall golf performance. ⛳
+
+Your coach has invited you to The Webber Method to help you improve with a clear, personalized path and a holistic approach to performance.
+
+Please create your Webber Method Student account using this same email: ${email}
+
+Student app: Webber-Method-Student-App.html
+
+Once your account is set up, you can start logging rounds, practice sessions, and Performance Lab (Simulator) data to track your progress and stay connected with your coach.
+
+${fromLine}Let’s get to work—one great session at a time.
+
+- The Webber Method`);
+  return { subject, body };
+}
+
+function openInviteDraft(email, subject, body){
+  const provider = inviteProvider.value;
+  if(provider === 'gmail'){ window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${subject}&body=${body}`, '_blank'); return; }
+  if(provider === 'outlook'){ window.open(`https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}&subject=${subject}&body=${body}`, '_blank'); return; }
+  window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+}
+
+addStudent.onclick = ()=>{
+  const name = studentName.value.trim();
+  const email = studentEmail.value.trim().toLowerCase();
+  if(!name || !email) return alert('Enter student name and email');
+  if(!getCoachInviteEmail()) return alert('Please save coach invite email first.');
+  const students = getStudents();
+  if(students.some(s=>s.email===email)) return alert('Student already exists in your coach profile.');
+  students.push({
+    name, email,
+    profile:{
+      program:'Break 100 Program',
+      rankings:{tee:1,approach:2,short:3,course:4},
+      smashByClub:{},
+      trackmanByClub:{},
+      practiceFocusAllDays:{tee:'',approach:'',short:'',course:''},
+      practiceFocusByDay:{},
+      dailyThemeByDay:{},
+      currentProgramDay:1,
+      assignedDrills:[]
+    }
+  });
+  setStudents(students);
+  if(!localStorage.getItem(studentDataKey(email))) localStorage.setItem(studentDataKey(email), JSON.stringify({rounds:[],practice:[],trackman:[]}));
+  const invite = buildInviteEmail(name, email);
+  invitePreview.value = decodeURIComponent(invite.body);
+  renderStudents();
+  openInviteDraft(email, invite.subject, invite.body);
+  studentName.value=''; studentEmail.value='';
+  alert('Student added under your coach profile. Invite draft opened.');
+};
+
+copyInvite.onclick = async ()=>{
+  const text = invitePreview.value.trim();
+  if(!text) return alert('No invite text to copy yet. Add or open a student invite first.');
+  try{ await navigator.clipboard.writeText(text); alert('Invite text copied to clipboard.'); }
+  catch(_err){ alert('Could not copy automatically. Please manually copy from Invite Preview.'); }
+};
+
+function collectFocusValues(){ return {tee:focusTee.value.trim(),approach:focusApproach.value.trim(),short:focusShort.value.trim(),course:focusCourse.value.trim()}; }
+function deriveCurrentProgramDay(profile, data){
+  const saved = Number(profile?.currentProgramDay);
+  if(Number.isFinite(saved)) return Math.max(1, Math.min(180, Math.round(saved)));
+  const completed = Array.isArray(data?.practice) ? data.practice.length : 0;
+  return Math.max(1, Math.min(180, completed + 1));
+}
+
+applyAllDaysFocus.onclick = ()=>{
+  if(!selectedEmail) return alert('Open a student first.');
+  const students = getStudents(); const i = students.findIndex(s=>s.email===selectedEmail); if(i<0) return;
+  students[i].profile = students[i].profile || {}; students[i].profile.practiceFocusAllDays = collectFocusValues(); setStudents(students);
+  focusStatus.textContent = 'Applied practice focus to all program days.';
+};
+
+applySpecificDayFocus.onclick = ()=>{
+  if(!selectedEmail) return alert('Open a student first.');
+  const day = Number(specificDayInput.value); if(!day || day < 1 || day > 180) return alert('Enter a valid day between 1 and 180.');
+  const students = getStudents(); const i = students.findIndex(s=>s.email===selectedEmail); if(i<0) return;
+  students[i].profile = students[i].profile || {}; students[i].profile.practiceFocusByDay = students[i].profile.practiceFocusByDay || {};
+  students[i].profile.practiceFocusByDay[String(day)] = collectFocusValues(); setStudents(students); focusStatus.textContent = `Applied practice focus to Day ${day}.`;
+};
+
+applyDailyTheme.onclick = ()=>{
+  if(!selectedEmail) return alert('Open a student first.');
+  const day = Number(specificDayInput.value);
+  if(!day || day < 1 || day > 180) return alert('Enter a valid day between 1 and 180.');
+  const theme = dailyThemeInput.value.trim();
+  if(!theme) return alert('Enter a daily theme to apply.');
+  const students = getStudents();
+  const i = students.findIndex(s=>s.email===selectedEmail);
+  if(i<0) return;
+  students[i].profile = students[i].profile || {};
+  students[i].profile.dailyThemeByDay = students[i].profile.dailyThemeByDay || {};
+  students[i].profile.dailyThemeByDay[String(day)] = theme;
+  setStudents(students);
+  focusStatus.textContent = `Applied daily theme to Day ${day}.`;
+};
+
+setProgramDayBtn.onclick = ()=>{
+  if(!selectedEmail) return alert('Open a student first.');
+  const day = Number(programDayInput.value);
+  if(!day || day < 1 || day > 180) return alert('Enter a valid day between 1 and 180.');
+  const students = getStudents();
+  const i = students.findIndex(s=>s.email===selectedEmail);
+  if(i<0) return;
+  students[i].profile = students[i].profile || {};
+  students[i].profile.currentProgramDay = Math.round(day);
+  setStudents(students);
+  programDayStatus.textContent = `Current Day: Day ${Math.round(day)}`;
+  alert(`Student current program day updated to Day ${Math.round(day)}.`);
+};
+
+resetProgramDayBtn.onclick = ()=>{
+  if(!selectedEmail) return alert('Open a student first.');
+  const students = getStudents();
+  const i = students.findIndex(s=>s.email===selectedEmail);
+  if(i<0) return;
+  students[i].profile = students[i].profile || {};
+  students[i].profile.currentProgramDay = 1;
+  setStudents(students);
+  programDayInput.value = 1;
+  programDayStatus.textContent = 'Current Day: Day 1';
+  alert('Student program reset to Day 1.');
+};
+
+saveStudentProfile.onclick = ()=>{
+  if(!selectedEmail) return;
+  const students = getStudents(); const i = students.findIndex(s=>s.email===selectedEmail); if(i<0) return;
+  const d = getStudentData(selectedEmail);
+  const bagClubs = normalizeMyBag(d.myBag);
+  const rankings = [Number(rankTee.value),Number(rankApproach.value),Number(rankShort.value),Number(rankCourse.value)];
+  if(new Set(rankings).size!==4 || rankings.some(r=>r<1||r>4)) return alert('Rankings must be unique 1-4.');
+  students[i].profile = {
+    program:studentProgram.value,
+    rankings:{tee:rankings[0],approach:rankings[1],short:rankings[2],course:rankings[3]},
+    smashByClub: students[i].profile?.smashByClub || {},
+    trackmanByClub: bagClubs.length ? collectClubTrackmanSettings(bagClubs, students[i].profile || {}) : (students[i].profile?.trackmanByClub || {}),
+    practiceFocusAllDays: collectFocusValues(),
+    practiceFocusByDay: students[i].profile?.practiceFocusByDay || {},
+    dailyThemeByDay: students[i].profile?.dailyThemeByDay || {},
+    currentProgramDay: Number(students[i].profile?.currentProgramDay ?? deriveCurrentProgramDay(students[i].profile, d)),
+    assignedDrills: students[i].profile?.assignedDrills || []
+  };
+  setStudents(students);
+  alert('Student coach settings saved.');
+};
+
+
+function getDrillCategories(){ return ['Tee Shot Performance','Approach Shot Performance','Short Game Performance','Course Management','Body/Movement Performance']; }
+
+function renderAssignedStudentDrills(student){
+  const assigned=(student?.profile?.assignedDrills||[]);
+  assignedStudentDrills.innerHTML = `<table><thead><tr><th>Category</th><th>Drill</th><th>Description</th><th>Source</th></tr></thead><tbody>${assigned.map(d=>`<tr><td>${d.category||''}</td><td>${d.title||''}</td><td>${d.description||''}</td><td>${d.sourceSection||''}</td></tr>`).join('') || '<tr><td colspan="4">No assigned drills yet.</td></tr>'}</tbody></table>`;
+}
+
+function renderAssignDrillOptions(){
+  const drills=getDrills();
+  assignDrillFromLibrary.innerHTML = drills.map((d,i)=>`<option value='${i}'>${d.title} (${d.section})</option>`).join('') || '<option value="">No drills in library yet</option>';
+}
+
+assignDrillToStudentBtn.onclick = ()=>{
+  if(!selectedEmail) return alert('Open a student first.');
+  const drills=getDrills();
+  const idx=Number(assignDrillFromLibrary.value);
+  if(Number.isNaN(idx) || idx<0 || idx>=drills.length) return alert('Add a drill to library first.');
+  const students=getStudents();
+  const i=students.findIndex(s=>s.email===selectedEmail);
+  if(i<0) return;
+  const d=drills[idx];
+  students[i].profile = students[i].profile || {};
+  students[i].profile.assignedDrills = students[i].profile.assignedDrills || [];
+  students[i].profile.assignedDrills.push({
+    title:d.title,
+    description:d.description,
+    sourceSection:d.section,
+    category:assignDrillCategory.value,
+    assignedAt:new Date().toISOString()
+  });
+  setStudents(students);
+  renderAssignedStudentDrills(students[i]);
+  alert('Drill assigned to student.');
+};
+
+
+function readVideoAsDataUrl(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=()=>reject(new Error('Could not read selected video file.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+addDrill.onclick = async ()=>{
+  const section = drillSection.value;
+  const title = drillTitle.value.trim();
+  const description = drillDescription.value.trim();
+  if(!title || !description) return alert('Enter drill title and description.');
+
+  const file = drillVideo.files && drillVideo.files[0] ? drillVideo.files[0] : null;
+  let videoData='';
+  let videoName='';
+  if(file){
+    if(!String(file.type||'').startsWith('video/')) return alert('Please select a valid video file.');
+    try{
+      videoData = await readVideoAsDataUrl(file);
+      videoName = file.name || 'Drill Video';
+    }catch(_err){
+      return alert('Unable to read selected video. Please try another file.');
+    }
+  }
+
+  const drills = getDrills();
+  drills.push({section,title,description,videoData,videoName,createdAt:new Date().toISOString()});
+  setDrills(drills);
+  drillTitle.value=''; drillDescription.value=''; drillVideo.value='';
+  renderDrills(); renderClubhouseSummary();
+  alert('Drill added.');
+};
+
+function renderDrills(){
+  const sections = getDrillCategories();
+  const drills = getDrills();
+  drillSections.innerHTML = sections.map(s=>{
+    const rows = drills.filter(d=>d.section===s).map((d,i)=>`<li><strong>${i+1}. ${d.title}</strong> — ${d.description}${d.videoData?`<div style='margin-top:.4rem'><video controls style='max-width:100%;border:1px solid #d6e8dc;border-radius:8px' src='${d.videoData}'></video><p class='muted' style='margin:.2rem 0 0'>Video: ${d.videoName||'Attached'}</p></div>`:''}</li>`).join('') || '<li>No drills yet.</li>';
+    return `<div class="card"><h4>${s}</h4><ul>${rows}</ul></div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>

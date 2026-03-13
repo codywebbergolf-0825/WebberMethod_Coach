@@ -1,0 +1,24 @@
+:root { --green:#0d5c33; --dark:#0a2e1a; --light:#f4faf6; }
+* { box-sizing:border-box; font-family: Inter, system-ui, sans-serif; }
+body { margin:0; background:linear-gradient(160deg,var(--dark),#0f4327 35%, var(--light) 35%); min-height:100vh; }
+.hero { color:white; padding:1.5rem 2rem 0.6rem; }
+.nav { display:flex; gap:.5rem; flex-wrap:wrap; padding:0 2rem 1rem; }
+.nav button { border:0; background:#d9ecdf; color:#133; padding:.5rem .7rem; border-radius:999px; cursor:pointer; }
+.nav button.active { background:var(--green); color:#fff; }
+main { padding:0 2rem 2rem; }
+.page { display:none; }
+.page.active { display:block; }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; }
+.card, #roundSummary > div, #practiceSummary > div, #trackmanSummary > div, #programPanel > div {
+  background:white; border:1px solid #d6e8dc; border-radius:14px; padding:1rem; margin: .8rem 0;
+}
+.metric { background:var(--green); color:white; border-radius:12px; padding:.9rem; }
+.metric h4 { margin:0 0 .2rem; font-size:.9rem; opacity:.9; }
+.metric p { margin:0; font-size:1.2rem; font-weight:700; }
+.grid2 { display:grid; grid-template-columns:repeat(2,minmax(200px,1fr)); gap:.8rem; }
+label { display:flex; flex-direction:column; gap:.3rem; }
+.full { grid-column:1/-1; }
+input,select,textarea,button { padding:.55rem; border-radius:10px; border:1px solid #b8d2c0; }
+button { background:var(--green); color:white; border:0; cursor:pointer; }
+.hidden { display:none; }
+.row { display:flex; gap:.6rem; margin-top:1rem; }
